@@ -148,6 +148,10 @@ private:
    * Note: can be negative, if lock-onlys abort before the multi-home
    */
   std::unordered_map<TxnId, int32_t> mh_abort_waiting_on_;
+
+  int txn_counter_ = 0;
+  int last_txn_counter_ = 0;
+  TimePoint last_log_;
 };
 
 } // namespace slog

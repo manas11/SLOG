@@ -25,7 +25,8 @@ Scheduler::Scheduler(
     config_(config),
     pull_socket_(*broker->GetContext(), ZMQ_PULL),
     worker_socket_(*broker->GetContext(), ZMQ_ROUTER),
-    sender_(broker) {
+    sender_(broker),
+    last_log_(Clock::now()) {
   broker->AddChannel(SCHEDULER_CHANNEL);
   pull_socket_.bind("inproc://" + SCHEDULER_CHANNEL);
   pull_socket_.setsockopt(ZMQ_LINGER, 0);
@@ -230,7 +231,18 @@ void Scheduler::HandleResponseFromWorker(const internal::WorkerResponse& res) {
   }
 #endif /* defined(REMASTER_PROTOCOL_SIMPLE) || defined(REMASTER_PROTOCOL_PER_KEY) */
 
-  SendToCoordinatingServer(txn_id);
+  // SendToCoordinatingServer(txn_id);
+  txn_counter_++;
+  auto span = Clock::now() - last_log_;
+  if (span > 1s) {
+    LOG(INFO) <<  "Throughput: "
+              << (txn_counter_ - last_txn_counter_) / duration_cast<seconds>(span).count()
+              << " txn/s"; 
+
+    last_txn_counter_ = txn_counter_;
+    last_log_ = Clock::now();
+  }
+
   all_txns_.erase(txn_id);
 }
 
