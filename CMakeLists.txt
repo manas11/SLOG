@@ -210,7 +210,14 @@ if (BUILD_CLIENT)
     ${EXTERNAL_LIBS})
 endif()
 
-
+add_executable(microbenchmark service/microbenchmark.cpp)
+target_link_libraries(microbenchmark
+  common
+  connection
+  module
+  proto
+  ${EXTERNAL_LIBS})
+  
 #========================================
 #                Tests
 #========================================
