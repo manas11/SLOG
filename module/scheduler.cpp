@@ -12,6 +12,22 @@ using std::move;
 
 namespace slog {
 
+void MeasureThroughput() {
+  static int64_t counter = 0;
+  static int64_t last_counter = 0;
+  static TimePoint last_time;
+  counter++;
+  auto span = Clock::now() - last_time;
+  if (span > 1s) {
+    LOG(INFO) <<  "Throughput: "
+              << (counter - last_counter) / duration_cast<seconds>(span).count()
+              << " txn/s"; 
+
+    last_counter = counter;
+    last_time = Clock::now();
+  }
+}
+
 namespace {
 uint32_t SelectWorkerForTxn(TxnId txn_id, uint32_t num_workers) {
   // TODO: Use a hash function
@@ -541,6 +557,8 @@ void Scheduler::Dispatch(TxnId txn_id, bool one_way) {
       config_,
       txn->mutable_internal(),
       TransactionEvent::DISPATCHED);
+
+  MeasureThroughput();
 
   // Prepare a request with the txn to be sent to the worker
   Request req;
