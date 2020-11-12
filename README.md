@@ -144,3 +144,4 @@ Write set:
 Type: SINGLE_HOME
 Code: GET A GET B GET C
 ```
+.
