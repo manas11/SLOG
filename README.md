@@ -23,3 +23,20 @@ cd build
 cmake ..
 make -j$(nproc)
 ```
+
+### Install dependencies for admin tool.
+```
+sudo apt-get install python3-pip -y
+pip3 install -r tools/requirements.txt
+```
+
+### Install docker
+Follow [Docker engine install on Ubuntu](https://docs.docker.com/engine/install/ubuntu/). Then, configure docker to run without Sudo using [Link](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+
+### Build docker image and push the image to a remote repository:
+https://hub.docker.com/repository/docker/ctring/slog
+```
+docker build . -t <image-name>
+docker login
+docker push <image-name>
+```
