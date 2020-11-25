@@ -44,6 +44,9 @@ docker images
 docker tag <image-id> manas11/manas:latest
 
 docker push manas11/manas
+
+# we pushed our docker image to
+https://hub.docker.com/r/manas11/manas
 ```
 
 ### Create local cluster:
@@ -59,6 +62,9 @@ python3 tools/gen_data.py -c /var/tmp/slog.conf -s 100 -su mb /var/tmp
 ```
 
 ### Run benchmark tests
+The benchmarking tool needs to know which replica key is mastered and which partition it belongs to. To that end, we use the gen_data tool to deterministically generate data across the cluster as well as make a copy on the local machine to be used by the benchmarking tool. Running a benchmark basic workload of 100,500,2000 transactions with a 50% probability of multi-home transactions to study the performance of SLOG.
+Different kinds of workload can be used with the benchmarking tool. For currently available workloads, source code is mentioned in the  benchmark.cpp file present in repository. The parameters of a workload can be found near the beginning of its source code in the workload directory.
+
 ```
 build/benchmark -data_dir /var/tmp -config /var/tmp/slog.conf -num_txns=1000 -wl=basic -params="mh=50"
 ```
